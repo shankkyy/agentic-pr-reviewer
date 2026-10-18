@@ -1,0 +1,13 @@
+diff --git a/app/repositories/orders.py b/app/repositories/orders.py
+--- a/app/repositories/orders.py
++++ b/app/repositories/orders.py
+@@ -2,3 +2,9 @@
+     cur = conn.cursor()
+     cur.execute("SELECT id, total FROM orders WHERE id = ?", (order_id,))
+     return cur.fetchone()
++
++
++def count_orders(conn):
++    cur = conn.cursor()
++    cur.execute("SELECT COUNT(*) FROM orders")
++    return cur.fetchone()[0]

@@ -1,0 +1,8 @@
+diff --git a/app/util/greeting.py b/app/util/greeting.py
+--- a/app/util/greeting.py
++++ b/app/util/greeting.py
+@@ -1,2 +1,2 @@
+-def greet(name):
+-    return "hi " + name
++def greet(name: str) -> str:
++    return f"hi {name}"

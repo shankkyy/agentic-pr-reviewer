@@ -1,0 +1,5 @@
+--- a/../../etc/passwd
++++ b/../../etc/passwd
+@@ -1 +1 @@
+-root
++toor

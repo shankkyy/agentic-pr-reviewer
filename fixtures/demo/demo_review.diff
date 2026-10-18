@@ -1,0 +1,30 @@
+diff --git a/app/services/pagination.py b/app/services/pagination.py
+--- a/app/services/pagination.py
++++ b/app/services/pagination.py
+@@ -1,4 +1,4 @@
+ def paginate(items, page, size):
+     start = page * size
+-    end = start + size
++    end = start + size + 1
+     return items[start:end]
+diff --git a/app/repositories/users.py b/app/repositories/users.py
+--- a/app/repositories/users.py
++++ b/app/repositories/users.py
+@@ -3,5 +3,5 @@
+ 
+ def find_user(conn: sqlite3.Connection, username: str):
+     cur = conn.cursor()
+-    cur.execute("SELECT id, email FROM users WHERE name = ?", (username,))
++    cur.execute(f"SELECT id, email FROM users WHERE name = '{username}'")
+     return cur.fetchone()
+diff --git a/app/auth/session.py b/app/auth/session.py
+--- a/app/auth/session.py
++++ b/app/auth/session.py
+@@ -1,5 +1,5 @@
+-import json
++import pickle
+ 
+ 
+ def load_session(raw: bytes) -> dict:
+-    return json.loads(raw)
++    return pickle.loads(raw)

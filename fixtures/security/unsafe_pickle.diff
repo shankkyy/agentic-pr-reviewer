@@ -1,0 +1,11 @@
+diff --git a/app/auth/session.py b/app/auth/session.py
+--- a/app/auth/session.py
++++ b/app/auth/session.py
+@@ -1,5 +1,5 @@
+-import json
++import pickle
+ 
+ 
+ def load_session(raw: bytes) -> dict:
+-    return json.loads(raw)
++    return pickle.loads(raw)

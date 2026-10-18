@@ -1,0 +1,10 @@
+diff --git a/app/repositories/users.py b/app/repositories/users.py
+--- a/app/repositories/users.py
++++ b/app/repositories/users.py
+@@ -3,5 +3,5 @@
+ 
+ def find_user(conn: sqlite3.Connection, username: str):
+     cur = conn.cursor()
+-    cur.execute("SELECT id, email FROM users WHERE name = ?", (username,))
++    cur.execute(f"SELECT id, email FROM users WHERE name = '{username}'")
+     return cur.fetchone()

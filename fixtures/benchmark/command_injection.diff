@@ -1,0 +1,9 @@
+diff --git a/app/tools/runner.py b/app/tools/runner.py
+--- a/app/tools/runner.py
++++ b/app/tools/runner.py
+@@ -2,4 +2,4 @@
+ 
+ 
+ def run_ls(path: str) -> bytes:
+-    return subprocess.run(["ls", path], capture_output=True).stdout
++    return subprocess.run(f"ls {path}", shell=True, capture_output=True).stdout

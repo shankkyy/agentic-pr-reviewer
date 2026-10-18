@@ -1,0 +1,114 @@
+{
+  "version": 1,
+  "description": "Labeled diffs: clean changes and single-issue changes. Line numbers are new-file lines.",
+  "cases": [
+    {
+      "id": "clean_change",
+      "diff": "fixtures/clean/clean_change.diff",
+      "label": "clean",
+      "expected": []
+    },
+    {
+      "id": "clean_parameterized_query",
+      "diff": "fixtures/benchmark/clean_parameterized_query.diff",
+      "label": "clean",
+      "expected": []
+    },
+    {
+      "id": "clean_safe_yaml",
+      "diff": "fixtures/benchmark/clean_safe_yaml.diff",
+      "label": "clean",
+      "expected": []
+    },
+    {
+      "id": "clean_none_handling",
+      "diff": "fixtures/benchmark/clean_none_handling.diff",
+      "label": "clean",
+      "expected": []
+    },
+    {
+      "id": "clean_fstring_logging",
+      "diff": "fixtures/benchmark/clean_fstring_logging.diff",
+      "label": "clean",
+      "expected": []
+    },
+    {
+      "id": "off_by_one_pagination",
+      "diff": "fixtures/buggy/off_by_one_pagination.diff",
+      "label": "issue",
+      "expected": [
+        {
+          "file": "app/services/pagination.py",
+          "line": 3,
+          "category": "correctness",
+          "marker": "end = start + size + 1"
+        }
+      ]
+    },
+    {
+      "id": "range_skip",
+      "diff": "fixtures/benchmark/range_skip.diff",
+      "label": "issue",
+      "expected": [
+        {
+          "file": "app/services/totals.py",
+          "line": 3,
+          "category": "correctness",
+          "marker": "range(len(prices) - 1)"
+        }
+      ]
+    },
+    {
+      "id": "sql_injection",
+      "diff": "fixtures/security/sql_injection.diff",
+      "label": "issue",
+      "expected": [
+        {
+          "file": "app/repositories/users.py",
+          "line": 6,
+          "category": "security",
+          "marker": "cur.execute(f"
+        }
+      ]
+    },
+    {
+      "id": "unsafe_pickle",
+      "diff": "fixtures/security/unsafe_pickle.diff",
+      "label": "issue",
+      "expected": [
+        {
+          "file": "app/auth/session.py",
+          "line": 5,
+          "category": "security",
+          "marker": "pickle.loads(raw)"
+        }
+      ]
+    },
+    {
+      "id": "command_injection",
+      "diff": "fixtures/benchmark/command_injection.diff",
+      "label": "issue",
+      "expected": [
+        {
+          "file": "app/tools/runner.py",
+          "line": 5,
+          "category": "security",
+          "marker": "shell=True"
+        }
+      ]
+    },
+    {
+      "id": "tls_verify_disabled",
+      "diff": "fixtures/benchmark/tls_verify_disabled.diff",
+      "label": "issue",
+      "expected": [
+        {
+          "file": "app/clients/http.py",
+          "line": 5,
+          "category": "security",
+          "marker": "verify=False"
+        }
+      ]
+    }
+  ]
+}

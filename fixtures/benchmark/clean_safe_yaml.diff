@@ -1,0 +1,11 @@
+diff --git a/app/config/loader.py b/app/config/loader.py
+--- a/app/config/loader.py
++++ b/app/config/loader.py
+@@ -1,5 +1,5 @@
+-import json
++import yaml
+ 
+ 
+ def load_config(raw: str) -> dict:
+-    return json.loads(raw)
++    return yaml.safe_load(raw)

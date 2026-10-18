@@ -1,0 +1,9 @@
+diff --git a/app/services/pagination.py b/app/services/pagination.py
+--- a/app/services/pagination.py
++++ b/app/services/pagination.py
+@@ -1,4 +1,4 @@
+ def paginate(items, page, size):
+     start = page * size
+-    end = start + size
++    end = start + size + 1
+     return items[start:end]

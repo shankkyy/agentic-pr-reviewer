@@ -1,0 +1,10 @@
+diff --git a/app/users/names.py b/app/users/names.py
+--- a/app/users/names.py
++++ b/app/users/names.py
+@@ -1,2 +1,4 @@
+-def name_of(user):
+-    return user["name"]
++def name_of(user: dict | None) -> str:
++    if user is None:
++        return ""
++    return str(user.get("name", ""))

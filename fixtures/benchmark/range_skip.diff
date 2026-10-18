@@ -1,0 +1,10 @@
+diff --git a/app/services/totals.py b/app/services/totals.py
+--- a/app/services/totals.py
++++ b/app/services/totals.py
+@@ -1,5 +1,5 @@
+ def sum_prices(prices):
+     total = 0
+-    for i in range(len(prices)):
++    for i in range(len(prices) - 1):
+         total += prices[i]
+     return total

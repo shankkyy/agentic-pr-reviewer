@@ -1,0 +1,9 @@
+diff --git a/app/clients/http.py b/app/clients/http.py
+--- a/app/clients/http.py
++++ b/app/clients/http.py
+@@ -2,4 +2,4 @@
+ 
+ 
+ def fetch(url: str) -> str:
+-    return requests.get(url, timeout=5).text
++    return requests.get(url, timeout=5, verify=False).text

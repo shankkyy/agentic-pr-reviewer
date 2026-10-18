@@ -1,0 +1,19 @@
+diff --git a/app/utils/totals.py b/app/utils/totals.py
+--- a/app/utils/totals.py
++++ b/app/utils/totals.py
+@@ -1,5 +1,13 @@
+ from __future__ import annotations
+ 
+ 
+-def total(items):
+-    return sum(items)
++def total(items: list[float]) -> float:
++    """Return the sum of item prices, ignoring None values."""
++    return sum(item for item in items if item is not None)
++
++
++def average(items: list[float]) -> float:
++    values = [item for item in items if item is not None]
++    if not values:
++        raise ValueError("no values to average")
++    return sum(values) / len(values)
