@@ -75,15 +75,15 @@ export default function UploadPanel({ onSubmitPaste, onSubmitFile, submitting, s
     <Card
       title="New review"
       actions={
-        <div className="flex gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800" role="tablist" aria-label="Input method">
+        <div className="flex gap-1 rounded-full bg-neutral-100 p-1" role="tablist" aria-label="Input method">
           {(["upload", "paste"] as Mode[]).map((m) => (
             <button
               key={m}
               role="tab"
               aria-selected={mode === m}
               onClick={() => setMode(m)}
-              className={`rounded-md px-3 py-1 text-xs font-medium ${
-                mode === m ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white" : "text-slate-600 dark:text-slate-300"
+              className={`rounded-full px-3.5 py-1 text-xs font-medium transition-all duration-300 ease-out ${
+                mode === m ? "bg-black text-white" : "text-neutral-500 hover:text-black"
               }`}
             >
               {m === "upload" ? "Upload file" : "Paste diff"}
@@ -92,9 +92,9 @@ export default function UploadPanel({ onSubmitPaste, onSubmitFile, submitting, s
         </div>
       }
     >
-      <div className="space-y-4">
+      <div className="space-y-5">
         {mode === "upload" ? (
-          <>
+          <div key="upload" className="animate-fade-in space-y-4">
             <div
               onDragOver={(e) => {
                 e.preventDefault();
@@ -113,16 +113,14 @@ export default function UploadPanel({ onSubmitPaste, onSubmitFile, submitting, s
               role="button"
               tabIndex={0}
               aria-label="Drop a diff file here or press Enter to choose one"
-              className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors ${
-                dragging
-                  ? "border-blue-500 bg-blue-50 dark:bg-blue-950/40"
-                  : "border-slate-300 hover:border-slate-400 dark:border-slate-700 dark:hover:border-slate-600"
+              className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed px-6 py-12 text-center transition-all duration-300 ease-out ${
+                dragging ? "scale-[1.005] border-black bg-neutral-100" : "border-black/25 hover:border-black hover:bg-neutral-50"
               }`}
             >
-              <p className="text-sm font-medium text-slate-800 dark:text-slate-100">
-                Drag a unified diff here, or <span className="text-blue-600 dark:text-blue-400">choose a file</span>
+              <p className="text-sm font-medium text-black">
+                Drag a unified diff here, or <span className="underline underline-offset-4">choose a file</span>
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-neutral-500">
                 .diff or .patch, up to 1 MB. The server validates content; file extensions are not trusted.
               </p>
               <input
@@ -134,22 +132,22 @@ export default function UploadPanel({ onSubmitPaste, onSubmitFile, submitting, s
               />
             </div>
             {file && (
-              <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-slate-50 px-3 py-2 text-sm dark:bg-slate-800">
-                <span className="truncate font-mono text-slate-700 dark:text-slate-200">
-                  {file.name} <span className="text-slate-500">({(file.size / 1024).toFixed(1)} KB)</span>
+              <div className="animate-fade-up flex flex-wrap items-center justify-between gap-2 rounded-xl border border-black/10 px-4 py-2.5 text-sm">
+                <span className="truncate font-mono text-black">
+                  {file.name} <span className="text-neutral-500">({(file.size / 1024).toFixed(1)} KB)</span>
                 </span>
                 <button
                   onClick={() => setFile(null)}
-                  className="text-xs text-slate-500 underline hover:text-slate-800 dark:hover:text-slate-200"
+                  className="text-xs text-neutral-500 underline underline-offset-4 transition-colors hover:text-black"
                 >
                   Remove
                 </button>
               </div>
             )}
-          </>
+          </div>
         ) : (
-          <div className="space-y-2">
-            <label htmlFor="pasted-diff" className="text-xs font-medium text-slate-600 dark:text-slate-300">
+          <div key="paste" className="animate-fade-in space-y-2">
+            <label htmlFor="pasted-diff" className="text-xs font-medium text-neutral-600">
               Unified diff text
             </label>
             <textarea
@@ -162,9 +160,9 @@ export default function UploadPanel({ onSubmitPaste, onSubmitFile, submitting, s
               spellCheck={false}
               rows={12}
               placeholder={"diff --git a/app/x.py b/app/x.py\n--- a/app/x.py\n+++ b/app/x.py\n@@ -1 +1 @@\n-old\n+new"}
-              className="w-full rounded-lg border border-slate-300 bg-white p-3 font-mono text-xs text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:ring-blue-900"
+              className="w-full rounded-xl border border-black/15 bg-white p-4 font-mono text-xs text-black transition-all duration-200 placeholder:text-neutral-400 focus:border-black focus:outline-none focus:ring-4 focus:ring-black/5"
             />
-            <p className="text-xs text-slate-500 dark:text-slate-400">{pasted.length.toLocaleString()} characters</p>
+            <p className="text-xs text-neutral-500">{pasted.length.toLocaleString()} characters</p>
           </div>
         )}
 
@@ -172,18 +170,18 @@ export default function UploadPanel({ onSubmitPaste, onSubmitFile, submitting, s
           <button
             onClick={mode === "upload" ? handleFileSubmit : handlePasteSubmit}
             disabled={submitting || (mode === "upload" ? !file : !pasted.trim())}
-            className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:bg-neutral-800 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30"
           >
             {submitting ? "Submitting…" : "Start review"}
           </button>
           <button
             onClick={loadSample}
-            className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+            className="rounded-full border border-black/20 px-5 py-2.5 text-sm font-medium text-black transition-all duration-200 hover:border-black hover:bg-black hover:text-white active:scale-[0.97]"
           >
             Load sample demo diff
           </button>
           {usingSample && (
-            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+            <span className="animate-fade-in rounded-full border border-dashed border-black/40 px-2.5 py-0.5 text-xs text-neutral-600">
               {SAMPLE_DEMO_LABEL}
             </span>
           )}

@@ -16,7 +16,7 @@ export default function ProgressPanel({ job, error }: { job: ReviewJobView | nul
   if (!job) {
     return (
       <Card title="Review progress">
-        {error ? <Alert tone="error">{error}</Alert> : <p className="text-sm text-slate-500">Loading review…</p>}
+        {error ? <Alert tone="error">{error}</Alert> : <p className="animate-fade-in text-sm text-neutral-500">Loading review…</p>}
       </Card>
     );
   }
@@ -30,43 +30,54 @@ export default function ProgressPanel({ job, error }: { job: ReviewJobView | nul
         <div className="flex items-center gap-2">
           <JobBadge status={job.status} />
           {job.mock_mode && (
-            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+            <span className="rounded-full border border-dashed border-black px-2.5 py-0.5 text-xs font-medium text-black">
               mock mode
             </span>
           )}
         </div>
       }
     >
-      <dl className="mb-4 grid grid-cols-1 gap-x-6 gap-y-1 text-xs text-slate-600 sm:grid-cols-2 dark:text-slate-300">
+      <dl className="mb-5 grid grid-cols-1 gap-x-8 gap-y-2 text-xs text-neutral-600 sm:grid-cols-2">
         <div className="flex gap-2">
-          <dt className="font-medium">Review ID</dt>
+          <dt className="font-medium text-black">Review ID</dt>
           <dd className="font-mono">{job.review_id}</dd>
         </div>
         <div className="flex gap-2">
-          <dt className="font-medium">Source</dt>
+          <dt className="font-medium text-black">Source</dt>
           <dd className="truncate">{job.source_name}</dd>
         </div>
         <div className="flex gap-2">
-          <dt className="font-medium">Created</dt>
+          <dt className="font-medium text-black">Created</dt>
           <dd>{formatTime(job.created_at)}</dd>
         </div>
         <div className="flex gap-2">
-          <dt className="font-medium">Current stage</dt>
+          <dt className="font-medium text-black">Current stage</dt>
           <dd>{running ? job.current_stage ?? "waiting for a worker" : "—"}</dd>
         </div>
       </dl>
 
       <ol className="space-y-2">
-        {STAGE_ORDER.map((name) => {
+        {STAGE_ORDER.map((name, i) => {
           const record = byStage.get(name);
           const status = record?.status ?? (running && job.current_stage === name ? "running" : "pending");
+          const isCurrent = status === "running";
           return (
-            <li key={name} className="flex flex-wrap items-start gap-3 rounded-lg border border-slate-200 px-3 py-2 dark:border-slate-800">
-              <StageDot status={status} />
+            <li
+              key={name}
+              style={{ animationDelay: `${i * 40}ms` }}
+              className={`animate-fade-up flex flex-wrap items-start gap-3 rounded-xl border px-4 py-3 transition-all duration-500 ease-out ${
+                isCurrent ? "border-black" : "border-black/10"
+              }`}
+            >
+              <div className="mt-1.5">
+                <StageDot status={status} />
+              </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-slate-800 dark:text-slate-100">{LABELS[name] ?? name}</p>
+                <p className={`text-sm font-medium transition-colors duration-300 ${status === "pending" ? "text-neutral-400" : "text-black"}`}>
+                  {LABELS[name] ?? name}
+                </p>
                 {record && (
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <p className="text-xs text-neutral-500">
                     {record.status} · {record.duration_ms.toFixed(0)} ms{record.detail ? ` · ${record.detail}` : ""}
                     {record.error ? ` · error: ${record.error}` : ""}
                   </p>
@@ -78,14 +89,14 @@ export default function ProgressPanel({ job, error }: { job: ReviewJobView | nul
       </ol>
 
       {job.error && (
-        <div className="mt-4">
+        <div className="mt-5">
           <Alert tone="error">
             {job.error.message} <span className="font-mono text-xs">({job.error.code})</span>
           </Alert>
         </div>
       )}
       {error && (
-        <div className="mt-4">
+        <div className="mt-5">
           <Alert tone="error">{error}</Alert>
         </div>
       )}

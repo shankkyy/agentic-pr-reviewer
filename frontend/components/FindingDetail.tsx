@@ -12,7 +12,7 @@ export default function FindingDetail({ finding }: { finding: Finding | null }) 
   if (!finding) {
     return (
       <Card title="Finding details">
-        <p className="text-sm text-slate-500 dark:text-slate-400">Select a finding to see its evidence, remediation, and verification.</p>
+        <p className="text-sm text-neutral-500">Select a finding to see its evidence, remediation, and verification.</p>
       </Card>
     );
   }
@@ -33,13 +33,13 @@ export default function FindingDetail({ finding }: { finding: Finding | null }) 
         </div>
       }
     >
-      <div className="space-y-5 text-sm">
+      <div className="space-y-6 text-sm">
         <div>
-          <h3 className="text-base font-semibold text-slate-900 dark:text-white">{finding.title}</h3>
-          <p className="mt-1 font-mono text-xs text-slate-600 dark:text-slate-300">
+          <h3 className="text-base font-semibold tracking-tight text-black">{finding.title}</h3>
+          <p className="mt-1.5 font-mono text-xs text-neutral-600">
             {finding.file_path} · {lineRange}
           </p>
-          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mt-2 text-xs text-neutral-500">
             Category: {finding.category} · Confidence: {Math.round(finding.confidence * 100)}% · Source:{" "}
             {SOURCE_TEXT[finding.source_type] ?? finding.source_type}
           </p>
@@ -47,21 +47,21 @@ export default function FindingDetail({ finding }: { finding: Finding | null }) 
 
         {finding.code_excerpt && (
           <Section title="Changed code (from the diff)">
-            <pre className="overflow-x-auto rounded-lg bg-slate-950 p-3 font-mono text-xs leading-relaxed text-slate-100">
+            <pre className="overflow-x-auto rounded-xl bg-black p-4 font-mono text-xs leading-relaxed text-white">
               {finding.code_excerpt}
             </pre>
           </Section>
         )}
 
         <Section title="Explanation">
-          <p className="whitespace-pre-wrap text-slate-700 dark:text-slate-200">{finding.explanation || "No explanation provided."}</p>
+          <p className="whitespace-pre-wrap text-neutral-800">{finding.explanation || "No explanation provided."}</p>
         </Section>
 
         <Section title="Evidence">
           {finding.evidence.length === 0 ? (
-            <p className="text-slate-500 dark:text-slate-400">No evidence recorded.</p>
+            <p className="text-neutral-500">No evidence recorded.</p>
           ) : (
-            <ul className="list-inside list-disc space-y-1 font-mono text-xs text-slate-700 dark:text-slate-200">
+            <ul className="list-inside list-disc space-y-1 font-mono text-xs text-neutral-800">
               {finding.evidence.map((item, i) => (
                 <li key={i} className="break-words">
                   {item}
@@ -72,47 +72,47 @@ export default function FindingDetail({ finding }: { finding: Finding | null }) 
         </Section>
 
         <Section title="Suggested remediation">
-          <p className="whitespace-pre-wrap text-slate-700 dark:text-slate-200">{finding.suggested_fix || "No remediation proposed."}</p>
+          <p className="whitespace-pre-wrap text-neutral-800">{finding.suggested_fix || "No remediation proposed."}</p>
         </Section>
 
         <Section title="Rule references">
-          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-xs text-slate-700 dark:text-slate-200">
-            <dt className="font-medium">Tool</dt>
+          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-xs text-neutral-800">
+            <dt className="font-medium text-black">Tool</dt>
             <dd>{finding.tool ?? "—"}</dd>
-            <dt className="font-medium">Rule ID</dt>
+            <dt className="font-medium text-black">Rule ID</dt>
             <dd className="font-mono">{finding.rule_id ?? "— (model finding)"}</dd>
-            <dt className="font-medium">Reviewers / tools</dt>
+            <dt className="font-medium text-black">Reviewers / tools</dt>
             <dd>{finding.reviewers.join(", ") || "—"}</dd>
-            <dt className="font-medium">Merged duplicates</dt>
+            <dt className="font-medium text-black">Merged duplicates</dt>
             <dd className="font-mono break-words">{finding.related_rules.join(", ") || "none"}</dd>
           </dl>
         </Section>
 
         <Section title="Verification">
-          <p className="text-slate-700 dark:text-slate-200">
-            <span className="font-medium">{finding.verification_status.replace("_", " ")}</span>
+          <p className="text-neutral-800">
+            <span className="font-medium text-black">{finding.verification_status.replace("_", " ")}</span>
             {finding.verification_reason ? ` — ${finding.verification_reason}` : ""}
           </p>
         </Section>
 
         {finding.suggested_test && (
           <Section title="Suggested regression test">
-            <div className="mb-2 inline-flex rounded-md bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+            <div className="mb-3 inline-flex rounded-full border border-dashed border-black px-2.5 py-0.5 text-[11px] font-semibold tracking-wider text-black">
               SUGGESTED — NOT EXECUTED
             </div>
-            <pre className="overflow-x-auto rounded-lg bg-slate-950 p-3 font-mono text-xs leading-relaxed text-slate-100">
+            <pre className="overflow-x-auto rounded-xl bg-black p-4 font-mono text-xs leading-relaxed text-white">
               {finding.suggested_test}
             </pre>
             {finding.suggested_test_behavior && (
-              <p className="mt-2 text-xs text-slate-600 dark:text-slate-300">
-                <span className="font-medium">Expected behavior:</span> {finding.suggested_test_behavior}
+              <p className="mt-2.5 text-xs text-neutral-600">
+                <span className="font-medium text-black">Expected behavior:</span> {finding.suggested_test_behavior}
               </p>
             )}
           </Section>
         )}
         {!finding.suggested_test && finding.test_status === "error" && (
           <Section title="Suggested regression test">
-            <p className="text-xs text-slate-500 dark:text-slate-400">The test engineer could not produce a valid suggestion for this finding.</p>
+            <p className="text-xs text-neutral-500">The test engineer could not produce a valid suggestion for this finding.</p>
           </Section>
         )}
       </div>
@@ -123,7 +123,7 @@ export default function FindingDetail({ finding }: { finding: Finding | null }) 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
-      <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{title}</h4>
+      <h4 className="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-neutral-500">{title}</h4>
       {children}
     </div>
   );

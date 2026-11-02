@@ -157,10 +157,8 @@ export default function Home() {
       key={id}
       disabled={disabled}
       onClick={() => setView(id)}
-      className={`w-full rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
-        view === id
-          ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-          : "text-slate-700 hover:bg-slate-200/70 dark:text-slate-300 dark:hover:bg-slate-800"
+      className={`w-full rounded-full px-4 py-2 text-left text-sm font-medium transition-all duration-300 ease-out active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-30 ${
+        view === id ? "bg-black text-white" : "text-neutral-500 hover:bg-black/5 hover:text-black"
       }`}
     >
       {label}
@@ -171,28 +169,29 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
-      <aside className="border-b border-slate-200 bg-white px-4 py-4 lg:w-60 lg:border-b-0 lg:border-r dark:border-slate-800 dark:bg-slate-900">
-        <div className="mb-4">
-          <p className="text-sm font-semibold tracking-tight">Agentic PR Reviewer</p>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Diff review with verified findings</p>
+      <aside className="border-b border-black/10 bg-white px-5 py-5 lg:min-h-screen lg:w-64 lg:border-b-0 lg:border-r">
+        <div className="mb-6 flex items-center gap-3">
+          <span className="h-3 w-3 rounded-sm bg-black" aria-hidden="true" />
+          <div>
+            <p className="text-sm font-semibold tracking-tight">Agentic PR Reviewer</p>
+            <p className="text-xs text-neutral-500">Diff review, verified findings</p>
+          </div>
         </div>
         <nav className="flex gap-2 lg:flex-col" aria-label="Main">
           {navItem("new", "New review")}
           {navItem("history", "Review history")}
           {navItem("review", "Current review", !activeId)}
         </nav>
-        <div className="mt-6 hidden text-xs text-slate-500 lg:block dark:text-slate-400">
-          <p className="mb-2">
-            <ModeBadge health={health} error={healthError} />
-          </p>
-          <p>Backend: {process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000"}</p>
+        <div className="mt-8 hidden space-y-3 text-xs text-neutral-500 lg:block">
+          <ModeBadge health={health} error={healthError} />
+          <p className="break-all">Backend: {process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000"}</p>
         </div>
       </aside>
 
-      <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl space-y-6">
+      <main className="min-w-0 flex-1 px-5 py-8 sm:px-8 lg:px-12 lg:py-10">
+        <div key={view} className="mx-auto max-w-6xl space-y-6 animate-fade-up">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h1 className="text-xl font-semibold tracking-tight">
+            <h1 className="text-2xl font-semibold tracking-tight">
               {view === "new" ? "New review" : view === "history" ? "Review history" : "Review"}
             </h1>
             <div className="lg:hidden">
@@ -230,12 +229,12 @@ export default function Home() {
             <>
               {!activeId && (
                 <Card>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">No review is open. Start one or pick one from history.</p>
+                  <p className="text-sm text-neutral-500">No review is open. Start one or pick one from history.</p>
                 </Card>
               )}
               {activeId && (
                 <>
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600 dark:text-slate-300">
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-neutral-500">
                     {job && <JobBadge status={job.status} />}
                     <span className="font-mono">{activeId}</span>
                     {job && <span>Created {formatTime(job.created_at)}</span>}
@@ -243,7 +242,7 @@ export default function Home() {
                       <button
                         onClick={cancelActive}
                         disabled={cancelling}
-                        className="ml-auto rounded-md border border-slate-300 px-3 py-1 font-medium text-slate-700 hover:bg-white disabled:opacity-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+                        className="ml-auto rounded-full border border-black px-4 py-1.5 text-xs font-medium text-black transition-all duration-200 hover:bg-black hover:text-white active:scale-[0.97] disabled:opacity-40"
                       >
                         {cancelling ? "Cancelling…" : "Cancel review"}
                       </button>
@@ -273,8 +272,8 @@ export default function Home() {
                           selectedId={selectedId}
                           onSelect={setSelectedId}
                         />
-                        <div className="xl:sticky xl:top-6 xl:self-start">
-                          <FindingDetail finding={selectedFinding} />
+                        <div className="xl:sticky xl:top-8 xl:self-start">
+                          <FindingDetail key={selectedFinding?.id ?? "none"} finding={selectedFinding} />
                         </div>
                       </div>
                       <RunDetails report={report} />
@@ -293,58 +292,58 @@ export default function Home() {
 function RunDetails({ report }: { report: ReviewReport }) {
   return (
     <Card title="Run details">
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-2">
         <div className="space-y-3 text-xs">
-          <h3 className="font-semibold text-slate-700 dark:text-slate-200">Reviewers</h3>
-          <ul className="space-y-1">
+          <h3 className="font-semibold text-black">Reviewers</h3>
+          <ul className="space-y-1.5">
             {report.reviewers.map((r) => (
               <li key={r.reviewer} className="flex flex-wrap gap-x-2">
                 <span className="font-medium">{r.reviewer}</span>
                 <span>{r.status}</span>
-                <span className="text-slate-500">
+                <span className="text-neutral-500">
                   {r.findings_proposed} proposed · {r.llm_calls} call(s) · {r.duration_ms.toFixed(0)} ms
                 </span>
-                {r.error_code && <span className="font-mono text-red-700 dark:text-red-300">{r.error_code}</span>}
-                {r.omitted_files.length > 0 && <span className="text-amber-700">{r.omitted_files.length} file(s) omitted</span>}
+                {r.error_code && <span className="font-mono font-semibold text-black">{r.error_code}</span>}
+                {r.omitted_files.length > 0 && <span className="font-medium underline">{r.omitted_files.length} file(s) omitted</span>}
               </li>
             ))}
-            {report.reviewers.length === 0 && <li className="text-slate-500">No reviewer ran for this diff.</li>}
+            {report.reviewers.length === 0 && <li className="text-neutral-500">No reviewer ran for this diff.</li>}
           </ul>
-          <h3 className="pt-2 font-semibold text-slate-700 dark:text-slate-200">Analysis tools</h3>
-          <ul className="space-y-1">
+          <h3 className="pt-2 font-semibold text-black">Analysis tools</h3>
+          <ul className="space-y-1.5">
             {report.tools.map((t) => (
               <li key={t.tool} className="flex flex-wrap gap-x-2">
                 <span className="font-medium">{t.tool}</span>
                 <span>{t.status}</span>
-                <span className="text-slate-500">{t.diagnostics} diagnostic(s)</span>
-                {t.message && <span className="text-slate-500">· {t.message}</span>}
+                <span className="text-neutral-500">{t.diagnostics} diagnostic(s)</span>
+                {t.message && <span className="text-neutral-500">· {t.message}</span>}
               </li>
             ))}
           </ul>
         </div>
         <div className="space-y-3 text-xs">
-          <h3 className="font-semibold text-slate-700 dark:text-slate-200">Usage and cost</h3>
+          <h3 className="font-semibold text-black">Usage and cost</h3>
           <p>
             {report.usage.provider} / {report.usage.model} · {report.usage.llm_calls} LLM call(s) · {report.usage.input_tokens} in /{" "}
             {report.usage.output_tokens} out tokens
           </p>
-          <p className="text-slate-500">
+          <p className="text-neutral-500">
             Estimated cost: {report.usage.estimated_cost_usd === null ? "not measured" : `$${report.usage.estimated_cost_usd.toFixed(6)}`}.{" "}
             {report.usage.cost_note}
           </p>
-          <h3 className="pt-2 font-semibold text-slate-700 dark:text-slate-200">Files</h3>
-          <ul className="max-h-56 space-y-1 overflow-y-auto">
+          <h3 className="pt-2 font-semibold text-black">Files</h3>
+          <ul className="max-h-56 space-y-1.5 overflow-y-auto pr-2">
             {report.files.map((f) => (
               <li key={f.path} className="flex flex-wrap gap-x-2">
                 <span className="font-mono">{f.path}</span>
-                <span className="text-slate-500">
+                <span className="text-neutral-500">
                   {f.status} · +{f.added_lines} / −{f.deleted_lines} · {f.reason}
                 </span>
               </li>
             ))}
           </ul>
-          <h3 className="pt-2 font-semibold text-slate-700 dark:text-slate-200">Limitations</h3>
-          <ul className="list-inside list-disc space-y-0.5 text-slate-600 dark:text-slate-300">
+          <h3 className="pt-2 font-semibold text-black">Limitations</h3>
+          <ul className="list-inside list-disc space-y-0.5 text-neutral-600">
             {report.limitations.map((l, i) => (
               <li key={i}>{l}</li>
             ))}

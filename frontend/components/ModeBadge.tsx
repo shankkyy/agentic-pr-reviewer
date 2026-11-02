@@ -1,28 +1,37 @@
 import type { HealthResponse } from "@/lib/types";
 
+const base = "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition-all duration-300 ease-out";
+
 export default function ModeBadge({ health, error }: { health: HealthResponse | null; error: string | null }) {
   if (error) {
     return (
-      <span className="rounded-full bg-red-100 px-2.5 py-1 text-xs font-medium text-red-800 dark:bg-red-950 dark:text-red-200">
+      <span className={`${base} border-2 border-black font-semibold text-black`}>
+        <span className="h-1.5 w-1.5 rounded-full border border-black" aria-hidden="true" />
         Backend offline
       </span>
     );
   }
   if (!health) {
-    return <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-300">Checking backend…</span>;
+    return (
+      <span className={`${base} border-black/20 text-neutral-500`}>
+        <span className="h-1.5 w-1.5 animate-pulse-line rounded-full bg-neutral-400" aria-hidden="true" />
+        Checking backend…
+      </span>
+    );
   }
   if (health.mock_mode) {
     return (
       <span
         title="The deterministic mock provider is active. No external AI API is called and model findings are pattern-based."
-        className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900 dark:bg-amber-950 dark:text-amber-200"
+        className={`${base} border-dashed border-black font-medium text-black`}
       >
-        MOCK MODE · no API calls
+        Mock mode · no API calls
       </span>
     );
   }
   return (
-    <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
+    <span className={`${base} border-black bg-black font-medium text-white`}>
+      <span className="h-1.5 w-1.5 rounded-full bg-white" aria-hidden="true" />
       Live · {health.llm_provider} / {health.llm_model}
     </span>
   );
