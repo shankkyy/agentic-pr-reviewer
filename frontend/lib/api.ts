@@ -41,16 +41,22 @@ export function clearAuthToken(): void {
   }
 }
 
-/** Checks a candidate token against a real protected endpoint before storing it. */
-export async function validateAuthToken(token: string): Promise<boolean> {
+/**
+ * Checks a candidate token against a real protected endpoint before storing it.
+ * Distinguishes "wrong credentials" (backend reachable, 401) from "couldn't even
+ * reach the backend" (network/CORS failure) so the login form doesn't blame the
+ * user's password for an unrelated connectivity or server misconfiguration.
+ */
+export async function validateAuthToken(token: string): Promise<"ok" | "unauthorized" | "unreachable"> {
+  let response: Response;
   try {
-    const response = await fetch(`${API_BASE_URL}/api/reviews?limit=1`, {
+    response = await fetch(`${API_BASE_URL}/api/reviews?limit=1`, {
       headers: { Authorization: `Basic ${token}` },
     });
-    return response.ok;
   } catch {
-    return false;
+    return "unreachable";
   }
+  return response.ok ? "ok" : "unauthorized";
 }
 
 export class ApiError extends Error {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
-import { hasAuthToken, setAuthToken, validateAuthToken } from "@/lib/api";
+import { API_BASE_URL, hasAuthToken, setAuthToken, validateAuthToken } from "@/lib/api";
 
 /**
  * Gates the app behind HTTP Basic Auth credentials, entered once per browser
@@ -26,9 +26,13 @@ export default function LoginGate({ children }: { children: ReactNode }) {
     setChecking(true);
     setError(null);
     const token = btoa(`${username}:${password}`);
-    const ok = await validateAuthToken(token);
+    const result = await validateAuthToken(token);
     setChecking(false);
-    if (!ok) {
+    if (result === "unreachable") {
+      setError(`Cannot reach the backend at ${API_BASE_URL}. This looks like a network or CORS issue, not your credentials.`);
+      return;
+    }
+    if (result === "unauthorized") {
       setError("Invalid username or password.");
       return;
     }

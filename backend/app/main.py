@@ -81,7 +81,7 @@ def create_app(settings: Settings | None = None, service: ReviewService | None =
         CORSMiddleware,
         allow_origins=list(settings.cors_origins),
         allow_methods=["GET", "POST"],
-        allow_headers=["Content-Type", "Idempotency-Key", "X-Request-ID"],
+        allow_headers=["Content-Type", "Idempotency-Key", "X-Request-ID", "Authorization"],
         expose_headers=["X-Request-ID"],
         allow_credentials=False,
     )
