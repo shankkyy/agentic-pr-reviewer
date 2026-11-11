@@ -132,6 +132,7 @@ def _mock_findings(role: str, added_lines: list[tuple[str, int, str]]) -> list[d
             out.append(
                 {
                     "title": rule["title"],
+                    "category": rule["role"],  # mock rules don't cross categories; role == category today
                     "severity": rule["severity"],
                     "file_path": path,
                     "start_line": line_no,

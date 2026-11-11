@@ -71,7 +71,7 @@ def excerpt_for_range(parsed: ParsedDiff, path: str, start: int, end: int) -> st
 def finding_from_llm(draft: LLMFindingDraft, reviewer: str, parsed: ParsedDiff, index: int) -> Finding:
     explanation = f"Observed in diff: {draft.observed}\n\nInference (not directly observed): {draft.inference}"
     start, end = draft.start_line, max(draft.start_line, draft.end_line)
-    category = Category(reviewer)
+    category = draft.category
     return Finding(
         id=make_id("llm", reviewer, draft.file_path, str(start), draft.title, str(index)),
         rule_id=None,

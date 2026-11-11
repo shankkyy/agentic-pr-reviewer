@@ -55,6 +55,7 @@ class LLMFindingDraft(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     title: str = Field(min_length=3, max_length=200)
+    category: Category
     severity: Severity
     file_path: str = Field(min_length=1, max_length=1024)
     start_line: int = Field(ge=1)

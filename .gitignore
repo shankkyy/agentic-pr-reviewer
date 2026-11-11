@@ -3,6 +3,8 @@
 .env.*
 !.env.example
 
+*.json
+
 # Python
 __pycache__/
 *.py[cod]
