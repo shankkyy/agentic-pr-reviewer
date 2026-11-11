@@ -1,5 +1,7 @@
 # Agentic PR Reviewer
 
+**Live demo:** https://agentic-pr-reviewer-frontend.onrender.com/ — behind a login (HTTP Basic Auth); ask the owner for credentials. Hosted on Render's free tier, so review history resets on restart and the first request after idling may take a few seconds to wake up.
+
 A local developer tool that reviews unified Git diffs of Python code. You upload a `.diff` or `.patch` file (or paste diff text). The backend parses the diff, runs deterministic analyzers (Ruff, Bandit, focused AST checks), runs two specialist LLM reviewers (Correctness and Security) in parallel, deduplicates and verifies every finding against the diff, and stores the report in SQLite. The dashboard shows progress, findings, evidence, verification reasoning, and suggested (never executed) regression tests.
 
 > **Status of this repository (read this first).** The code is complete for the MVP scope, but the authoring environment could not install Python packages or npm packages (no package-index access). Section [Verification status](#verification-status) lists exactly what was executed and what was not. Run the commands in [Local setup](#local-setup) and the test suite before relying on the application.
