@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import LoginGate from "@/components/LoginGate";
 import ModeBadge from "@/components/ModeBadge";
 import UploadPanel from "@/components/UploadPanel";
 import ProgressPanel from "@/components/ProgressPanel";
@@ -27,6 +28,14 @@ function messageOf(err: unknown): string {
 }
 
 export default function Home() {
+  return (
+    <LoginGate>
+      <ReviewerApp />
+    </LoginGate>
+  );
+}
+
+function ReviewerApp() {
   const [view, setView] = useState<View>("new");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [job, setJob] = useState<ReviewJobView | null>(null);

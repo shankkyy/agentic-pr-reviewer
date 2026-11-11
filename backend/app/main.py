@@ -6,15 +6,17 @@ Run locally:  uvicorn app.main:app --reload --port 8000  (from the backend direc
 from __future__ import annotations
 
 import re
+import secrets
 import time
 import uuid
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from app.api.routes import router
 from app.core.config import Settings
@@ -26,15 +28,42 @@ from app.services.review_service import ReviewService
 log = get_logger("http")
 REQUEST_ID_RE = re.compile(r"^[A-Za-z0-9_\-]{8,64}$")
 
+_basic_auth = HTTPBasic(auto_error=False)
+
 
 def _error_body(code: str, message: str, request_id: str | None) -> dict:
     return {"error": {"code": code, "message": message, "request_id": request_id}}
+
+
+async def _require_auth(
+    request: Request,
+    credentials: HTTPBasicCredentials | None = Depends(_basic_auth),
+) -> None:
+    """Gate every route except /health behind HTTP Basic Auth.
+
+    A no-op unless both APP_AUTH_USERNAME and APP_AUTH_PASSWORD are set, so local
+    dev and the existing test suite are unaffected. /health stays open so a
+    deployment platform's health probe (which sends no credentials) still passes.
+    """
+    if request.url.path == "/health":
+        return
+    settings: Settings = request.app.state.settings
+    if not settings.auth_username or not settings.auth_password:
+        return
+    valid = (
+        credentials is not None
+        and secrets.compare_digest(credentials.username, settings.auth_username)
+        and secrets.compare_digest(credentials.password, settings.auth_password)
+    )
+    if not valid:
+        raise HTTPException(status_code=401, detail="Unauthorized", headers={"WWW-Authenticate": "Basic"})
 
 
 def create_app(settings: Settings | None = None, service: ReviewService | None = None) -> FastAPI:
     settings = settings or Settings.from_env()
     configure_logging(settings.log_level)
     register_secret(settings.llm_api_key)
+    register_secret(settings.auth_password)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -106,7 +135,7 @@ def create_app(settings: Settings | None = None, service: ReviewService | None =
             content=_error_body("internal_error", "An internal error occurred.", request_id_var.get()),
         )
 
-    app.include_router(router)
+    app.include_router(router, dependencies=[Depends(_require_auth)])
     return app
 
 

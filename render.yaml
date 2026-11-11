@@ -1,0 +1,57 @@
+# Render Blueprint for this app. Deploy: push this repo to GitHub, then in the
+# Render dashboard choose "New > Blueprint" and point it at the repo.
+#
+# Two onrender.com URLs are hardcoded below (CORS_ORIGINS and
+# NEXT_PUBLIC_API_BASE_URL), based on the `name` fields in this file. Render
+# assigns https://<name>.onrender.com UNLESS that name is already taken by a
+# different Render account, in which case it appends a suffix. After the
+# first deploy, check the actual URLs in the Render dashboard; if they don't
+# match these, update the two values below and redeploy.
+#
+# Storage: the backend's SQLite file lives in the container's filesystem,
+# which is ephemeral on Render's free plan (no `disk` is attached here).
+# Review history resets whenever the free instance restarts or redeploys.
+# To persist it, attach a Render persistent disk to the backend service
+# (requires a paid plan) mounted at /app/data, then redeploy.
+
+services:
+  - type: web
+    name: agentic-pr-reviewer-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_PATH
+        value: /app/data/reviews.db
+      - key: LLM_PROVIDER
+        value: openai
+      - key: LLM_MODEL
+        value: openai/gpt-oss-120b
+      - key: LLM_BASE_URL
+        value: https://api.groq.com/openai/v1
+      - key: LLM_API_KEY
+        sync: false # paste your Groq (or other provider) key into the Render dashboard; never commit it
+      - key: CORS_ORIGINS
+        value: https://agentic-pr-reviewer-frontend.onrender.com
+      - key: APP_AUTH_USERNAME
+        sync: false # pick a username in the Render dashboard before the first deploy
+      - key: APP_AUTH_PASSWORD
+        generateValue: true # Render mints a strong password; read it from the dashboard's Environment tab
+      - key: LOG_LEVEL
+        value: INFO
+
+  - type: web
+    name: agentic-pr-reviewer-frontend
+    runtime: docker
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    plan: free
+    envVars:
+      # Render translates a Docker service's env vars into build args, so this
+      # reaches the frontend Dockerfile's `ARG NEXT_PUBLIC_API_BASE_URL` at
+      # build time (it must be a build arg: Next.js inlines NEXT_PUBLIC_* vars
+      # into the client bundle during `next build`, not read at runtime).
+      - key: NEXT_PUBLIC_API_BASE_URL
+        value: https://agentic-pr-reviewer-backend.onrender.com

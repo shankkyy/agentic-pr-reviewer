@@ -9,6 +9,50 @@ import type {
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 export const MAX_UPLOAD_BYTES = 1024 * 1024;
 
+// HTTP Basic Auth token (base64 "user:pass"), kept client-side only for a deployed,
+// public instance. Unused and harmless when the backend has no auth configured.
+const AUTH_STORAGE_KEY = "apr_auth_token";
+
+function getAuthToken(): string | null {
+  try {
+    return sessionStorage.getItem(AUTH_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function hasAuthToken(): boolean {
+  return !!getAuthToken();
+}
+
+export function setAuthToken(token: string): void {
+  try {
+    sessionStorage.setItem(AUTH_STORAGE_KEY, token);
+  } catch {
+    // Storage unavailable (private browsing, etc.) — the user will be re-prompted.
+  }
+}
+
+export function clearAuthToken(): void {
+  try {
+    sessionStorage.removeItem(AUTH_STORAGE_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+/** Checks a candidate token against a real protected endpoint before storing it. */
+export async function validateAuthToken(token: string): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/reviews?limit=1`, {
+      headers: { Authorization: `Basic ${token}` },
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
 export class ApiError extends Error {
   readonly status: number;
   readonly code: string;
@@ -21,12 +65,17 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const headers = new Headers(init?.headers);
+  const token = getAuthToken();
+  if (token) headers.set("Authorization", `Basic ${token}`);
+
   let response: Response;
   try {
-    response = await fetch(`${API_BASE_URL}${path}`, init);
+    response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers });
   } catch {
     throw new ApiError(0, "network_error", `Cannot reach the backend at ${API_BASE_URL}. Is it running?`);
   }
+  if (response.status === 401) clearAuthToken();
   if (!response.ok) {
     let code = "http_error";
     let message = `Request failed with status ${response.status}.`;

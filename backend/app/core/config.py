@@ -1,7 +1,7 @@
 """Application settings loaded from environment variables (stdlib only).
 
-Secrets (LLM_API_KEY) are read from the environment only and are never logged
-or returned by any endpoint.
+Secrets (LLM_API_KEY, APP_AUTH_PASSWORD) are read from the environment only and
+are never logged or returned by any endpoint.
 """
 
 from __future__ import annotations
@@ -73,6 +73,8 @@ class Settings:
     max_review_prompt_chars: int = 40_000
     max_test_suggestions: int = 5
     log_level: str = "INFO"
+    auth_username: str = ""
+    auth_password: str = field(default="", repr=False)
 
     @property
     def mock_mode(self) -> bool:
@@ -117,4 +119,6 @@ class Settings:
             max_review_prompt_chars=_env_int("MAX_REVIEW_PROMPT_CHARS", 40_000),
             max_test_suggestions=_env_int("MAX_TEST_SUGGESTIONS", 5),
             log_level=_env_str("LOG_LEVEL", "INFO").upper(),
+            auth_username=_env_str("APP_AUTH_USERNAME", ""),
+            auth_password=_env_str("APP_AUTH_PASSWORD", ""),
         )
